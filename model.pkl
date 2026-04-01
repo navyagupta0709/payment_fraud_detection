@@ -1,0 +1,6 @@
+import pickle
+
+# maan ke chal rahe hain tumhara trained model ka naam 'model' hai
+pickle.dump(model, open('model.pkl', 'wb'))
+
+print("✅ model.pkl saved successfully")
