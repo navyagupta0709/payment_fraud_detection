@@ -1,6 +1,13 @@
+from sklearn.ensemble import RandomForestClassifier
+import numpy as np
 import pickle
 
-# maan ke chal rahe hain tumhara trained model ka naam 'model' hai
-pickle.dump(model, open('model.pkl', 'wb'))
+X = np.random.rand(100, 5)
+y = np.random.randint(0, 2, 100)
 
-print("✅ model.pkl saved successfully")
+model = RandomForestClassifier()
+model.fit(X, y)
+
+pickle.dump(model, open("model.pkl", "wb"))
+
+print("✅ Dummy model created")
