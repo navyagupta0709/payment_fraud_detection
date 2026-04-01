@@ -2,12 +2,15 @@ from sklearn.ensemble import RandomForestClassifier
 import numpy as np
 import pickle
 
+# dummy data
 X = np.random.rand(100, 5)
 y = np.random.randint(0, 2, 100)
 
 model = RandomForestClassifier()
 model.fit(X, y)
 
-pickle.dump(model, open("model.pkl", "wb"))
+# IMPORTANT: binary mode me save
+with open("model.pkl", "wb") as f:
+    pickle.dump(model, f)
 
-print("✅ Dummy model created")
+print("✅ Fresh model.pkl created")
