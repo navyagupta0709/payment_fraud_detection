@@ -1,5 +1,4 @@
 import streamlit as st
-import numpy as np
 
 # Page config
 st.set_page_config(page_title="Fraud Detection", page_icon="💳")
@@ -24,30 +23,30 @@ with col2:
     newbalanceDest = st.number_input("🏦 New Balance (Receiver)", min_value=0.0)
 
 # -------------------------------
-# Strong Fraud Logic
+# STRONG FRAUD LOGIC
 # -------------------------------
 def detect_fraud(amount, oldOrg, newOrig, oldDest, newDest):
     
     score = 0
 
-    # Rule 1: balance mismatch
-    if oldOrg - amount != newOrig:
+    # Rule 1: Sender balance mismatch
+    if abs((oldOrg - amount) - newOrig) > 1:
+        score += 2
+
+    # Rule 2: Receiver balance unchanged
+    if oldDest == newDest and amount > 0:
+        score += 2
+
+    # Rule 3: Large transaction
+    if amount > 100000:
         score += 1
 
-    # Rule 2: receiver balance unchanged (suspicious)
-    if oldDest == newDest:
-        score += 1
+    # Rule 4: Sender has no balance
+    if oldOrg <= 0 and amount > 0:
+        score += 2
 
-    # Rule 3: very large transaction
-    if amount > 200000:
-        score += 1
-
-    # Rule 4: zero balance sender (fraud pattern)
-    if oldOrg == 0 and amount > 0:
-        score += 1
-
-    # Rule 5: sudden huge jump in receiver balance
-    if newDest - oldDest > amount * 2:
+    # Rule 5: Abnormal receiver increase
+    if (newDest - oldDest) > amount * 1.5:
         score += 1
 
     return score
@@ -57,16 +56,18 @@ def detect_fraud(amount, oldOrg, newOrig, oldDest, newDest):
 # -------------------------------
 if st.button("🚀 Predict"):
     
-    fraud_score = detect_fraud(amount, oldbalanceOrg, newbalanceOrig,
-                               oldbalanceDest, newbalanceDest)
+    fraud_score = detect_fraud(
+        amount, oldbalanceOrg, newbalanceOrig,
+        oldbalanceDest, newbalanceDest
+    )
 
     st.subheader("📊 Result")
 
-    if fraud_score >= 2:
-        st.error(f"🚨 Fraud Detected! (Risk Score: {fraud_score}/5)")
+    if fraud_score >= 3:
+        st.error(f"🚨 Fraud Detected! (Risk Score: {fraud_score}/6)")
     else:
-        st.success(f"✅ Safe Transaction (Risk Score: {fraud_score}/5)")
+        st.success(f"✅ Safe Transaction (Risk Score: {fraud_score}/6)")
 
 # Footer
 st.markdown("---")
-st.markdown("💡 Rule-based Fraud Detection System")
+st.markdown("💡 Smart Rule-Based Fraud Detection System")
